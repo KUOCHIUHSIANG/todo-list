@@ -4,6 +4,7 @@ const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
 
 const Todo = require('./models/todo')
+const { response } = require('express')
 
 const app = express()
 const port = 3000
@@ -20,7 +21,7 @@ db.once('open', () => {
   console.log('mongodb connected!!')
 })
 
-app.engine('hbs', exphbs({ defaultLayout : 'main', extname: '.hbs' }))
+app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -28,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.get('/', (req, res) => {
   Todo.find()
     .lean()
-    .then(todos => res.render('index', { todos : todos }))
+    .then(todos => res.render('index', { todos: todos }))
     .catch(error => console.error(error))
 })
 
@@ -68,6 +69,14 @@ app.post('/todos/:id/edit', (req, res) => {
       return todo.save()
     })
     .then(() => res.redirect(`/todos/${id}`))
+    .catch(error => console.log(error))
+})
+
+app.post('/todos/:id/delete', (req, res) => {
+  const id = req.params.id
+  return Todo.findById(id)
+    .then(todo => todo.remove())
+    .then(() => res.redirect('/'))
     .catch(error => console.log(error))
 })
 
