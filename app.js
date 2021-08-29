@@ -7,9 +7,10 @@ const Todo = require('./models/todo')
 const { response } = require('express')
 
 const app = express()
-const port = 3000
+const PORT = process.env.PORT || 3000
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/todo-list'
 
-mongoose.connect('mongodb://localhost/todo-list')
+mongoose.connect(MONGODB_URI)
 
 const db = mongoose.connection
 
@@ -80,6 +81,6 @@ app.post('/todos/:id/delete', (req, res) => {
     .catch(error => console.log(error))
 })
 
-app.listen(port, () => {
-  console.log(`App is running on http://locaolhost:${port}`)
+app.listen(PORT, () => {
+  console.log(`App is running on http://locaolhost:${PORT}`)
 })
